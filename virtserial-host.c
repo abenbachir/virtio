@@ -124,8 +124,8 @@ static int guest_cmd_only(struct guest_packet *gpkt)
 static int guest_cmd(struct guest_packet *gpkt)
 {
 	int ret  = 0;
-	gpkt->key = 100;
-	gpkt->value = 321;
+	// gpkt->key = 100;
+	// gpkt->value = 321;
    ret = write(chardevs[1].sock, gpkt, sizeof(*gpkt));
 
    printf("wrote something to guest. ret val:%d\n", ret);

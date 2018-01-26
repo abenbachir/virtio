@@ -47,7 +47,7 @@
 #include "virtserial-demo.h"
 
 #define CONTROL_PORT "/dev/virtio-ports/test1"
-#define CONTROL_PORT2 "/dev/vport0p1"
+#define CONTROL_PORT2 "/dev/vport1p2"
 #define MAX_PORTS 10
 
 /* The fd to work with for read / write requests. Set by the open message */
@@ -470,6 +470,7 @@ back_to_open:
             close(cfd);
             goto back_to_open;
         }
+        printf("CMD: key=%d, value=%d\n", gpkt.key, gpkt.value);
         switch(gpkt.key) {
         case KEY_OPEN:
             ret = open_port(gpkt.value);
