@@ -36,4 +36,46 @@ struct guest_packet {
     int value;
 };
 
+
+char* getKEY(int value) {
+	switch(value) {
+        case KEY_OPEN:
+            return "KEY_OPEN";
+            break;
+        case KEY_CLOSE:
+            return "KEY_CLOSE";
+            break;
+        case KEY_NONBLOCK:
+            return "KEY_NONBLOCK";
+            break;
+        case KEY_LENGTH:
+            return "KEY_LENGTH";
+            break;
+        case KEY_OPEN_HOST_BIGFILE:
+            return "KEY_OPEN_HOST_BIGFILE";
+            break;
+        case KEY_HOST_BYTESTREAM:
+            return "KEY_HOST_BYTESTREAM";
+            break;
+        case KEY_HOST_CSUM:
+            return "KEY_HOST_CSUM";
+            break;
+        case KEY_OPEN_GUEST_BIGFILE:
+            return "KEY_OPEN_GUEST_BIGFILE";
+            break;
+        case KEY_GUEST_BYTESTREAM:
+            return "KEY_GUEST_BYTESTREAM";
+            break;
+        case KEY_GUEST_CSUM:
+            return "KEY_GUEST_CSUM";
+            break;
+        case KEY_SHUTDOWN:
+            return "KEY_SHUTDOWN";
+            break;
+        default:
+            return "default";
+            break;
+        }
+}
+
 #endif /* __VIRTSERIAL_DEMO_H__ */

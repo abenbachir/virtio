@@ -403,10 +403,10 @@ out_close:
     return err;
 }
 
-static int test_guest_file_send(int nr)
+static int test_guest_file_send(int nr, unsigned long long buf_length)
 {
-    char buf[BUF_LENGTH];
-    char csum[BUF_LENGTH];
+    char buf[buf_length];
+    char csum[buf_length];
     struct pollfd pollfds[1];
     struct guest_packet gpkt;
     int err, ret, fd, csum_fd;
@@ -431,7 +431,7 @@ static int test_guest_file_send(int nr)
     if (err)
         goto out_close;
 
-    guest_set_length(nr, BUF_LENGTH);
+    guest_set_length(nr, buf_length);
 
     gpkt.key = KEY_GUEST_BYTESTREAM;
     gpkt.value = nr;
@@ -447,7 +447,8 @@ static int test_guest_file_send(int nr)
             debug("poll returned %d\n", ret);
             break;
         }
-        ret = read(chardevs[nr].sock, buf, BUF_LENGTH);
+
+        ret = read(chardevs[nr].sock, buf, buf_length);
         if (ret == 0)
             break;
         if (ret < 0 && (errno == EINTR || errno == EAGAIN))
@@ -456,9 +457,11 @@ static int test_guest_file_send(int nr)
             fprintf(stderr, "read error %d\n", errno);
             break;
         }
-        write(fd, buf, ret);
-        if (ret > 0 && ret < BUF_LENGTH)
+        // todo: this been removed for benchmarking
+        /*write(fd, buf, ret);
+        if (ret > 0 && ret < buf_length)
             break;
+            */
     }
     err = result(__func__, true, "read/write", ret, -1, 0, OP_GT, false);
     if (err)
@@ -503,7 +506,7 @@ static int test_guest_file_send(int nr)
     if (err)
         goto out_close;
 
-    read(csum_fd, csum, BUF_LENGTH);
+    read(csum_fd, csum, buf_length);
     close(csum_fd);
 
     get_guest_response(&gpkt);
@@ -570,12 +573,28 @@ static int run_test(int test_nr, int nr)
 
 static int start_tests(void)
 {
+    int ret;
+    int nr = 2;
+    int samples = 100;
     /* Sends a big file across, compares sha1sums */
-    run_test(TEST_H_FILE_SEND, 2);
+    //run_test(TEST_H_FILE_SEND, 2);
 
     /* Sends a big file across, compares sha1sums */
-    run_test(TEST_G_FILE_SEND, 2);
+    //run_test(TEST_G_FILE_SEND, 2);
 
+    unsigned long long lengths[] = {80, 320, 640, 4096, 8182, 16384, 32768, 
+    32768
+        //1024000,4096000, 
+        //8192000, 16384000, 32768000
+    };
+    if (!guest_ok)
+        return 0;
+
+    for (int i = 0; i < sizeof(lengths)/sizeof(lengths[0]); i++ ) {
+        for (int j = 0; j < samples; j++ ) {
+            ret = test_guest_file_send(nr, lengths[i]);
+        }
+    }
     return 0;
 }
 
